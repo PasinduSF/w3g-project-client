@@ -15,10 +15,11 @@ const withAuth = (WrappedComponent) => {
       if (!accessToken) {
         Router.replace('/');
       }
-    }, []);
+    });
 
     return <WrappedComponent {...props} />;
   };
 };
 
+withAuth.displayName = 'withAuth';
 export default withAuth;

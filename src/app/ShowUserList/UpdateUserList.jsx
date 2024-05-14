@@ -51,7 +51,7 @@ function UpdateUserList(props) {
       setToken(jwtToken);
     }
     console.log(jwtToken);
-  }, []);
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

@@ -46,7 +46,7 @@ function AddDetails() {
             setToken(jwtToken);
         }
         console.log(jwtToken)
-    }, []);
+    });
 
 
     const handleChange = (e) => {

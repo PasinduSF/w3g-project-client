@@ -11,7 +11,7 @@ const useAuthToken = () => {
         if (jwtToken) {
             setToken(jwtToken);
         }
-    }, []);
+    });
 
     // Function to save the token to local storage
     const saveToken = (token) => {
