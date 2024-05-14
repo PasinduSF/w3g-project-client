@@ -119,7 +119,7 @@ function UpdateUserList(props) {
   
         try {
           const response = await axios.put(
-            `http://localhost:4000/users/updateUser/${updateData.id}`,
+            `http://44.220.137.157:4000/users/updateUser/${updateData.id}`,
             userData,
             {
               headers: {

@@ -120,7 +120,7 @@ function AddDetails() {
                 };
 
                 try {
-                    const response = await axios.post('http://localhost:4000/users/userAdd', userData, {
+                    const response = await axios.post('http://44.220.137.157:4000/users/userAdd', userData, {
                         headers: {
                             Authorization:token, 
                         },
