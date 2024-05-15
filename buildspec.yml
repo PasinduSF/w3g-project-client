@@ -1,10 +1,20 @@
 version: 0.2
 
+runtime-versions:
+  nodejs: 16.x
+
 phases:
   install:
     - npm install
+
   build:
     - npm run build
+
+  post_build:
+    - npm run export
+
 artifacts:
-  files: -'**/**'
-  base-directory: ".next"
+  files:
+    - ".next/**/*"
+    - "out/**/*"
+  discard-paths: yes
