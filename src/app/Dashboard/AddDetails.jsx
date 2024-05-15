@@ -17,6 +17,7 @@ function AddDetails() {
     const [showExtraPhoneFieldOne, setShowExtraPhoneFieldOne] = useState(false);
     const [showExtraPhoneFieldTwo, setShowExtraPhoneFieldTwo] = useState(false);
     const [token, setToken] = useState('');
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 
     const [formData, setFormData] = useState({
@@ -120,7 +121,7 @@ function AddDetails() {
                 };
 
                 try {
-                    const response = await axios.post('http://localhost:4000/users/userAdd', userData, {
+                    const response = await axios.post(`${baseUrl}/users/userAdd`, userData, {
                         headers: {
                             Authorization:token, 
                         },

@@ -18,10 +18,10 @@ function Home() {
         email: data.email,
         password: data.password,
       };
-      const baseUrl = process.env.BASE_URL;
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
       const response = await axios.post(
-        `http://localhost:4000/users/login`,
+        `${baseUrl}/users/login`,
         JSON.stringify(credentialData),
         {
           headers: {

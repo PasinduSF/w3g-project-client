@@ -28,7 +28,7 @@ function UserList() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/users/getUsers', {
+      const response = await axios.get(`${baseUrl}/users/getUsers`, {
         headers: {
           Authorization: token,
         },
@@ -58,7 +58,7 @@ function UserList() {
 
     if (result.isConfirmed) {
       try {
-        await axios.post(`http://localhost:4000/users/deactivate/${userId}`, null, {
+        await axios.post(`${baseUrl}/users/deactivate/${userId}`, null, {
           headers: {
             Authorization: token,
           },

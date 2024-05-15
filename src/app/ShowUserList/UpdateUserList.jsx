@@ -119,7 +119,7 @@ function UpdateUserList(props) {
   
         try {
           const response = await axios.put(
-            `http://localhost:4000/users/updateUser/${updateData.id}`,
+            `${baseUrl}/updateUser/${updateData.id}`,
             userData,
             {
               headers: {
