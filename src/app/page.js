@@ -21,7 +21,7 @@ function Home() {
       const baseUrl = process.env.BASE_URL;
 
       const response = await axios.post(
-        `${baseUrl}/users/login`,
+        `http://localhost:4000/users/login`,
         JSON.stringify(credentialData),
         {
           headers: {
