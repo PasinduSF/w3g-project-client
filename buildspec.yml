@@ -5,13 +5,16 @@ runtime-versions:
 
 phases:
   install:
-    - npm install
+    commands:
+      - npm install
 
   build:
-    - npm run build
+    commands:
+      - npm run build
 
   post_build:
-    - npm run export
+    commands:
+      - npm run export
 
 artifacts:
   files:
