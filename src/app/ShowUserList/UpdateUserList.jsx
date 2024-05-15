@@ -65,7 +65,6 @@ function UpdateUserList(props) {
     e.preventDefault();
 
     const validationErrors = validateUpdateFormFields(updateData);
-
     if(Object.keys(validationErrors).length === 0){
       const result = await Swal.fire({
         title: 'Update User?',
@@ -86,8 +85,8 @@ function UpdateUserList(props) {
         }
         const genderUppercase = toUpperCase(updateData.gender);
         const formattedDob = formatDate(updateData.dob);
+     
 
-    
         const userData = {
           type: 'USER',
           status: 'ONBOARD',
@@ -105,7 +104,7 @@ function UpdateUserList(props) {
             password: '',
           },
         };
-  
+        console.log(userData)
         // Update the specific mobile number field that the user has modified
         if (updateData.mobileNumberOne.trim() !== '') {
           userData.contact_info.mobile_number[0] = updateData.mobileNumberOne.trim();
@@ -116,19 +115,22 @@ function UpdateUserList(props) {
         if (updateData.mobileNumberThree.trim() !== '') {
           userData.contact_info.mobile_number[2] = updateData.mobileNumberThree.trim();
         }
-  
+
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; 
+
         try {
           const response = await axios.put(
-            `${baseUrl}/updateUser/${updateData.id}`,
+            `${baseUrl}/users/updateUser/${updateData.id}`,
             userData,
             {
               headers: {
                 Authorization: token,
               },
             }
-          );
+          );      
           props.onUserUpdate(userData);
           toast.success('User details have been updated successfully!');
+
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message === 'Email already exists') {
               toast.error('Email already exists. Please use a different email address.');

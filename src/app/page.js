@@ -13,6 +13,20 @@ function Home() {
   const loginUser = async (e) => {
     e.preventDefault();
 
+    if (!data.email || !data.password) {
+      toast.error("Please fill in all fields", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+
     try {
       const credentialData = {
         email: data.email,
@@ -49,7 +63,37 @@ function Home() {
         },
       });
     } catch (error) {
-      console.error("Login Failed:", error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "Invalid email or password"
+      ) {
+        toast.error("Invalid email or password", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "Invalid credentials"
+      ) {
+        toast.error("Invalid password", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
       toast.error("Login Failed", {
         position: "top-center",
         autoClose: 5000,

@@ -9,11 +9,13 @@ import Swal from 'sweetalert2';
 import toast, { Toaster } from 'react-hot-toast';
 
 function UserList() {
+
   const { token } = useAuthToken();
   const [showUpdateBox, setShowUpdateBox] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [isUserUpdated, setIsUserUpdated] = useState(false);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
   useEffect(() => {
     fetchUsers();
@@ -55,26 +57,22 @@ function UserList() {
       cancelButtonText: 'No',
       confirmButtonText: 'Yes',
     });
-
+  
     if (result.isConfirmed) {
       try {
         await axios.post(`${baseUrl}/users/deactivate/${userId}`, null, {
           headers: {
             Authorization: token,
           },
+        }).then(() => {
+          fetchUsers();
+          toast.success('User has been deactivated successfully');
         });
-
-        toast.success('User has been deactivated successfully');
-  
-
-        // Update users list after deactivation
-        fetchUsers();
       } catch (error) {
         console.error('Error deactivate user:', error);
       }
     }
   };
-
   const toggleUpdateBox = (user) => {
     setShowUpdateBox(!showUpdateBox);
     setSelectedUser(user);
