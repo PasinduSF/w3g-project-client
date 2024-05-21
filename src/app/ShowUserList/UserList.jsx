@@ -8,6 +8,7 @@ import UpdateUserList from './UpdateUserList';
 import Swal from 'sweetalert2';
 import toast, { Toaster } from 'react-hot-toast';
 
+
 function UserList() {
 
   const { token } = useAuthToken();
@@ -16,6 +17,24 @@ function UserList() {
   const [users, setUsers] = useState([]);
   const [isUserUpdated, setIsUserUpdated] = useState(false);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const [notificationStatus, setNotificationStatus] = useState(null);
+  const [fcmToken1, setFcmToken] = useState('');
+  const [userType, setUserType] = useState('');
+
+  useEffect(() => {
+    const loginUserType = localStorage.getItem('user_type')
+    setUserType(loginUserType)
+  }, []);
+
+
+  useEffect(() => {
+      const fetchFcmToken = async () => {
+          const FCM = localStorage.getItem('FCM');
+        setFcmToken(FCM);
+      };
+  
+      fetchFcmToken();
+    }, []);
 
   useEffect(() => {
     fetchUsers();
@@ -35,16 +54,47 @@ function UserList() {
           Authorization: token,
         },
       });
+    
       const updatedUsers = response.data.map(user => ({
         ...user,
-        backgroundColor: user.status === 'INACTIVE' ? '#fed7d7' : '',
-        active: user.status !== 'INACTIVE'
+        backgroundColor: (userType === 'ADMIN' && user.status === 'INACTIVE') ? '#fed7d7' : (userType === 'USER' ? (user.status === 'INACTIVE' ? '#fed7d7' : '#e6ffed') : ''),
+        active: user.status !== 'INACTIVE',
       }));
       setUsers(updatedUsers);
+      
     } catch (error) {
       console.error('Error retrieving users:', error);
     }
   };
+
+  // const deactivateUser = async (userId) => {
+  //   const result = await Swal.fire({
+  //     title: 'Warning',
+  //     text: 'Are you sure you want to deactivate?',
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#3085d6',
+  //     cancelButtonColor: '#d33',
+  //     cancelButtonText: 'No',
+  //     confirmButtonText: 'Yes',
+  //   });
+  
+  //   if (result.isConfirmed) {
+  //     try {
+  //       await axios.post(`${baseUrl}/users/deactivate/${userId}`, null, {
+  //         headers: {
+  //           Authorization: token,
+  //         },
+  //       }).then(() => {
+  //         fetchUsers();
+  //         toast.success('User has been deactivated successfully');
+          
+  //       });
+  //     } catch (error) {
+  //       console.error('Error deactivate user:', error);
+  //     }
+  //   }
+  // };
 
   const deactivateUser = async (userId) => {
     const result = await Swal.fire({
@@ -60,19 +110,43 @@ function UserList() {
   
     if (result.isConfirmed) {
       try {
-        await axios.post(`${baseUrl}/users/deactivate/${userId}`, null, {
+        const response = await axios.post(`${baseUrl}/users/deactivate/${userId}`, null, {
           headers: {
             Authorization: token,
           },
-        }).then(() => {
+        });
+
+        console.log("response", response)
+  
+        if (response.data.result.message === 'User deactivated successfully') {
           fetchUsers();
           toast.success('User has been deactivated successfully');
-        });
+  
+          // Send notification to the deactivated user
+          const notificationResponse = await axios.post(`${baseUrl}/notifications/send`, {
+            userId,
+            fcmToken1,
+          });
+
+          console.log("notificationResponse", notificationResponse)
+  
+          if (notificationResponse.status === 201) {
+            console.log('Notification sent successfully');
+            
+          } else {
+            console.error('Failed to send notification');
+          }
+        } else {
+          console.error('Error deactivating user');
+        }
       } catch (error) {
-        console.error('Error deactivate user:', error);
+        console.error('Error deactivating user:', error);
       }
     }
   };
+
+
+
   const toggleUpdateBox = (user) => {
     setShowUpdateBox(!showUpdateBox);
     setSelectedUser(user);
@@ -89,6 +163,7 @@ function UserList() {
 
   return (
     <div>
+
       <table className="w-full">
         <thead className="bg-[#F1F5FF] shadow-inner">
           <tr>
@@ -114,6 +189,7 @@ function UserList() {
               <td className="p-3 text-center">{user.basic_info.gender}</td>
               <td className="p-3 text-center">{user.contact_info.mobile_number[0]}</td>
               <td className="p-3 text-center">{user.contact_info.email}</td>
+              {userType === 'ADMIN' && (
               <td className="p-3 text-center">
                 {user.active && (
                   <>
@@ -135,10 +211,22 @@ function UserList() {
                 )}
                 {!user.active && <span className='bg-red-500 p-1 text-white uppercase text-[12px]'>Inactive</span>}
               </td>
+              )}
+              {userType === 'USER' && (
+              <td className="p-3 text-center">
+                {user.active && (
+                  user.active && <span className='bg-green-600 p-1 text-white uppercase text-[12px]'>Active</span>
+                )}
+                {!user.active && <span className='bg-red-500 p-1 text-white uppercase text-[12px]'>Inactive</span>}
+              </td>
+              )}
+
+
             </tr>
           ))}
         </tbody>
       </table>
+
       {showUpdateBox && (
         <UpdateUserList
           handleClick={toggleUpdateBox}
@@ -146,6 +234,16 @@ function UserList() {
           onUserUpdate={handleUserUpdate}
         />
       )}
+      {notificationStatus === 'success' && (
+      <div className="bg-green-500 text-white p-4 rounded-md mb-4">
+        Notification sent successfully to the deactivated user.
+      </div>
+    )}
+    {notificationStatus === 'error' && (
+      <div className="bg-red-500 text-white p-4 rounded-md mb-4">
+        Failed to send notification to the deactivated user.
+      </div>
+    )}
       <Toaster />
     </div>
   );

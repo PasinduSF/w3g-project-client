@@ -1,14 +1,25 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import FcmTokenComp from "../../home/firebaseForeground";
 
 function Home() {
   const [data, setData] = useState({ email: "", password: "" });
   const router = useRouter();
+
+  const [fcmToken1, setFcmToken] = useState("");
+  useEffect(() => {
+    const fetchFcmToken = async () => {
+      const FCM = localStorage.getItem("FCM");
+      setFcmToken(FCM);
+    };
+
+    fetchFcmToken();
+  }, []);
 
   const loginUser = async (e) => {
     e.preventDefault();
@@ -31,6 +42,7 @@ function Home() {
       const credentialData = {
         email: data.email,
         password: data.password,
+        fcmToken: fcmToken1,
       };
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -45,6 +57,10 @@ function Home() {
       );
 
       const responseData = await response.data;
+
+      // Store the token in localStorage
+      localStorage.setItem("user_type", responseData.user.type);
+
       // Store the token in localStorage
       localStorage.setItem("token1", responseData.access_token);
 
@@ -84,6 +100,21 @@ function Home() {
         error.response.data.message === "Invalid credentials"
       ) {
         toast.error("Invalid password", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "Your account has been deactivated"
+      ) {
+        toast.error("Your account has been deactivated", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,

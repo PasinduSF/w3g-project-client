@@ -11,14 +11,34 @@ import toast, { Toaster } from 'react-hot-toast';
 import { validateFormFields } from '../Validations/validateFormFields';
 
 
-
 function AddDetails() {
     const [selectedOption, setSelectedOption] = useState('');
     const [showExtraPhoneFieldOne, setShowExtraPhoneFieldOne] = useState(false);
     const [showExtraPhoneFieldTwo, setShowExtraPhoneFieldTwo] = useState(false);
     const [token, setToken] = useState('');
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const [fcmToken1, setFcmToken] = useState('');
+    // const [userType, setUserType] = useState('');
 
+    // useEffect(() => {
+    //     const loginUserType = localStorage.getItem('user_type') || 'ADMIN'; 
+    //   setUserType(loginUserType)
+    // }, []);
+
+    // // Disable buttons based on userType
+    // const isUserTypeUser = userType === 'USER';
+    // const clearButtonDisabled = isUserTypeUser;
+    // const saveButtonDisabled = isUserTypeUser;
+
+
+    useEffect(() => {
+        const fetchFcmToken = async () => {
+            const FCM = localStorage.getItem('FCM');
+          setFcmToken(FCM);
+        };
+    
+        fetchFcmToken();
+      }, []);
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -27,7 +47,8 @@ function AddDetails() {
         mobileNumber: '',
         mobileNumberTwo: '',
         mobileNumberThree: '',
-        email: ''
+        email: '',
+        password :''
     });
 
     const handleTogglePhoneFieldsOne = () => {
@@ -46,7 +67,6 @@ function AddDetails() {
         if (jwtToken) {
             setToken(jwtToken);
         }
-        console.log(jwtToken)
     });
 
 
@@ -67,6 +87,7 @@ function AddDetails() {
             mobileNumber: '',
             email: '',
             gender: '',
+            password:''
         });
 
         toast.dismiss();
@@ -116,9 +137,11 @@ function AddDetails() {
                         mobile_number: mobileNumbers,
                     },
                     auth_info: {
-                        password: '', 
+                        password: formData.password, 
                     },
                 };
+
+                console.log(userData)
 
                 try {
                     const response = await axios.post(`${baseUrl}/users/userAdd`, userData, {
@@ -126,6 +149,12 @@ function AddDetails() {
                             Authorization:token, 
                         },
                     });
+
+                        // // Send the FCM token to the server
+                        // await axios.post(`${baseUrl}/notifications/send`, {
+                        //     userId: userData.userId,
+                        //     token: fcmToken1,
+                        // });
                    
                     toast.success('User added successfully!!');
                     // Reset the form after successful submission
@@ -138,6 +167,7 @@ function AddDetails() {
                         mobileNumberThree: '',
                         email: '',
                         gender: '',
+                        password: ''
                     });
 
                 } catch (error) {
@@ -161,14 +191,15 @@ function AddDetails() {
     };
 
     return (
-        <form className='flex flex-col items-center w-[100%] h-full gap-3  ' onSubmit={handleSubmit}>
-            <div className='flex flex-col w-[90%] min-h-[80%] border-[2px] items-center '>
+        <form className='flex flex-col items-center w-[100%] h-full gap-3  mt-[-30px]' onSubmit={handleSubmit}>
+            <div className='flex flex-col w-[90%] min-h-[86%] border-[2px] items-center  '>
+               
                 {/* Basic details */}
-                <div className='flex flex-col w-full h-[60%] items-center '>
+                <div className='flex flex-col w-full h-[60%] items-center mt-[-5px]'>
                     <div className='flex w-[90%] h-[30%] items-center '>
                         <span className='text-[16px] font-semibold text-text'>Basic Details</span>
                     </div>
-                    <div className='flex flex-col gap-7 w-[90%] h-[50%] '>
+                    <div className='flex flex-col gap-3 w-[90%] h-[50%] mt-[-15px]'>
                         <div className='w-full h-[40%] flex justify-between'>
                             <input
                                 type='text'
@@ -198,11 +229,13 @@ function AddDetails() {
                         <div className='w-full h-[50%] '>
                             <Dropdown selectedOption={selectedOption} handleOptionSelect={handleOptionSelect} />
                         </div>
+                        
                     </div>
                 </div>
+
                 {/* Contact Details */}
                 <div className='flex flex-col gap-2 w-[90%] max-h-[30%]' >
-                    <div className='flex w-[90%] h-[30%]  items-center mt-[-10px]'>
+                    <div className='flex w-[90%] h-[30%]  items-center mt-[-45px]'>
                         <span className='text-[16px] font-semibold text-text'>Contact Details</span>
                     </div>
                     
@@ -263,11 +296,30 @@ function AddDetails() {
                                 placeholder="Mobile Number"
                                 value={formData.mobileNumberThree}
                                 onChange={handleChange}
-                                className="w-[25%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder"
+                                className="w-[25%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder mt-[-15px]"
                                 />
                          </> )}
                            
                         
+                    </div>
+                </div>
+
+                {/* Auth Details */}
+                <div className='flex flex-col gap-2 w-[90%] max-h-[30%] mt-2' >
+
+                    <div className='flex w-[90%] h-[30%]  items-center '>
+                        <span className='text-[16px] font-semibold text-text'>Auth info</span>
+                    </div>
+                    
+                    <div className='w-full min-h-[50%] flex gap-6 flex-wrap items-center '>
+                        <input
+                            type='password'
+                            name='password'
+                            placeholder='Password'
+                            value={formData.password}
+                            onChange={handleChange}
+                            className='w-[30%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder'
+                        />
                     </div>
                 </div>
             </div>
@@ -281,6 +333,7 @@ function AddDetails() {
                         color: '#003FE4',
                         border: "1px solid #003FE4"
                     }}
+                   
                 />
                 <Button
                     type="submit"
@@ -289,6 +342,7 @@ function AddDetails() {
                         color: 'white',
                         backgroundColor: "#003FE4"
                     }}
+               
                 />
             </div>
             {/* <ToastContainer /> */}
