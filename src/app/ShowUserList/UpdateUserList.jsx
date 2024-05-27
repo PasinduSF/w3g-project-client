@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { validateUpdateFormFields } from '../Validations/validateUpdateFormField';
+import WaitingDialoag from '../../components/WaitingDialoag';
 
 function formatDate(dateStr) {
   const date = new Date(dateStr);
@@ -16,6 +17,7 @@ function formatDate(dateStr) {
 
 
 function UpdateUserList(props) {
+  const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useState('');
   const [updateData, setUpdateData] = useState(() => {
     if (props.userData) {
@@ -78,7 +80,7 @@ function UpdateUserList(props) {
       });
   
       if (result.isConfirmed) {
-
+         setIsLoading(true)
         // convert user input gender as uppercase
         const toUpperCase = (str) => {
           return str.toUpperCase();
@@ -98,7 +100,7 @@ function UpdateUserList(props) {
           },
           contact_info: {
             email: updateData.email,
-            mobile_number: [...props.userData.contact_info.mobile_number], // Start with the existing mobile numbers
+            mobile_number: [...props.userData.contact_info.mobile_number], 
           },
           auth_info: {
             password: '',
@@ -136,7 +138,10 @@ function UpdateUserList(props) {
               toast.error('Email already exists. Please use a different email address.');
             } else {
               toast.error('An error occurred while updating the user information.');
+              console.log('error',error)
             } 
+        }finally{
+          setIsLoading(false)
         }
       }
 
@@ -163,8 +168,13 @@ function UpdateUserList(props) {
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-10">
-      <form className="relative bg-white w-[30%] h-[95%] rounded-lg shadow-md" onSubmit={handleSubmit}>
+    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-10 overflow-auto">
+      {/* Waiting spinner when deactivate user */}
+      {isLoading && (
+        <WaitingDialoag />
+      )}
+      
+      <form className="relative bg-white md:w-[30%] w-[80%]  h-[95%] rounded-lg shadow-md overflow-auto" onSubmit={handleSubmit}>
         <div className='w-full h-[85%]'>
           <div className='w-full h-[10%] flex items-center pl-5'>
             <span className='text-black text-[20px] font-Lato font-semibold'>User Details</span>
@@ -230,7 +240,7 @@ function UpdateUserList(props) {
         </div>
 
         {/* Buttons */}
-        <div className='absolute bottom-0 w-full h-[15%] flex gap-2 items-end justify-end pr-5 pb-5'>
+        <div className='absolute bottom-0 w-full h-[15%] flex gap-2 md:items-end items-center justify-center md:justify-end md:pr-5 pb-5'>
           <Button
             type="button"
             title="Cancel"

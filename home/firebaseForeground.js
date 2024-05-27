@@ -19,7 +19,7 @@ export default function FcmTokenComp() {
             payload.data.title
           );
 
-          toast.success(payload.data.body, {
+          toast.info(payload.data.body, {
             position: "top-center",
             autoClose: 5000,
             hideProgressBar: false,

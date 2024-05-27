@@ -5,11 +5,12 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import FcmTokenComp from "../../home/firebaseForeground";
+import WaitingDialoag from "../components/WaitingDialoag";
 
 function Home() {
   const [data, setData] = useState({ email: "", password: "" });
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [fcmToken1, setFcmToken] = useState("");
   useEffect(() => {
@@ -56,13 +57,15 @@ function Home() {
         }
       );
 
+      // Access the response headers
       const responseData = await response.data;
-
       // Store the token in localStorage
       localStorage.setItem("user_type", responseData.user.type);
 
+      console.log("response", response.headers.accesstoken);
+
       // Store the token in localStorage
-      localStorage.setItem("token1", responseData.access_token);
+      localStorage.setItem("token1", response.headers.accesstoken);
 
       // Use Link properly for navigation
       toast.success("Login Successful", {
@@ -78,13 +81,14 @@ function Home() {
           router.push("/Dashboard");
         },
       });
+      setIsLoading(true);
     } catch (error) {
       if (
         error.response &&
         error.response.data &&
-        error.response.data.message === "Invalid email or password"
+        error.response.data.message === "Invalid email"
       ) {
-        toast.error("Invalid email or password", {
+        toast.error("Invalid email", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -125,22 +129,15 @@ function Home() {
           theme: "light",
         });
       }
-      toast.error("Login Failed", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center">
-      <div className="w-[533px] h-[490px] border-[1px] border-blue-500">
+    <div className="w-full h-screen flex justify-center items-center bg-white ">
+      {isLoading && <WaitingDialoag />}
+      <div className=" w-[300px] md:w-[533px] h-[490px] border-[1px] border-blue-500 ">
         <div className="w-full h-full flex flex-col">
           <div className="w-full h-[5%] bg-blue-500" />
           <div className="flex items-center justify-center w-full h-[95%]">
@@ -165,7 +162,7 @@ function Home() {
                   type="text"
                   placeholder="Email"
                   onChange={(e) => setData({ ...data, email: e.target.value })}
-                  className="w-full h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder"
+                  className=" w-[90%] md:w-full h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder"
                 />
                 <input
                   type="password"
@@ -173,17 +170,17 @@ function Home() {
                   onChange={(e) =>
                     setData({ ...data, password: e.target.value })
                   }
-                  className="w-full h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder"
+                  className="w-[90%] md:w-full h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder"
                 />
-                <span className="absolute bottom-0 right-0 font-Lato text-text">
+                <span className="absolute bottom-0 right-3  md:right-0 font-Lato text-text">
                   Forgot Password
                 </span>
               </div>
               {/* Login button area */}
-              <div className="flex items-center w-full h-[20%]">
+              <div className="flex items-center w-full h-[20%] justify-center">
                 <button
                   type="submit"
-                  className="w-full h-[40px] bg-blue-500 border-none outline-none rounded-[4px] text-[16px] font-medium text-white"
+                  className="w-[80%] md:w-full h-[40px] bg-blue-500 border-none outline-none rounded-[4px] text-[16px] font-medium text-white"
                 >
                   Login
                 </button>

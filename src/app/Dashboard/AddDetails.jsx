@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { validateFormFields } from '../Validations/validateFormFields';
+import WaitingDialoag from '../../components/WaitingDialoag';
 
 
 function AddDetails() {
@@ -18,17 +19,8 @@ function AddDetails() {
     const [token, setToken] = useState('');
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     const [fcmToken1, setFcmToken] = useState('');
-    // const [userType, setUserType] = useState('');
-
-    // useEffect(() => {
-    //     const loginUserType = localStorage.getItem('user_type') || 'ADMIN'; 
-    //   setUserType(loginUserType)
-    // }, []);
-
-    // // Disable buttons based on userType
-    // const isUserTypeUser = userType === 'USER';
-    // const clearButtonDisabled = isUserTypeUser;
-    // const saveButtonDisabled = isUserTypeUser;
+    const [isLoading, setIsLoading] = useState(false);
+    
 
 
     useEffect(() => {
@@ -115,8 +107,7 @@ function AddDetails() {
             });
 
             if (result.isConfirmed) {
-                // User confirmed, proceed with form submission
-
+                setIsLoading(true)
                 const mobileNumbers = [
                     formData.mobileNumber,
                     formData.mobileNumberTwo,
@@ -150,12 +141,6 @@ function AddDetails() {
                         },
                     });
 
-                        // // Send the FCM token to the server
-                        // await axios.post(`${baseUrl}/notifications/send`, {
-                        //     userId: userData.userId,
-                        //     token: fcmToken1,
-                        // });
-                   
                     toast.success('User added successfully!!');
                     // Reset the form after successful submission
                     setFormData({
@@ -178,6 +163,8 @@ function AddDetails() {
                     }else {
                         toast.error('An error occurred while adding the user.');
                     }
+                }finally{
+                    setIsLoading(false)
                 }
             }
         }else{
@@ -191,163 +178,165 @@ function AddDetails() {
     };
 
     return (
-        <form className='flex flex-col items-center w-[100%] h-full gap-3  mt-[-30px]' onSubmit={handleSubmit}>
-            <div className='flex flex-col w-[90%] min-h-[86%] border-[2px] items-center  '>
-               
-                {/* Basic details */}
-                <div className='flex flex-col w-full h-[60%] items-center mt-[-5px]'>
-                    <div className='flex w-[90%] h-[30%] items-center '>
-                        <span className='text-[16px] font-semibold text-text'>Basic Details</span>
-                    </div>
-                    <div className='flex flex-col gap-3 w-[90%] h-[50%] mt-[-15px]'>
-                        <div className='w-full h-[40%] flex justify-between'>
-                            <input
-                                type='text'
-                                name='firstName'
-                                placeholder='First Name'
-                                value={formData.firstName}
-                                onChange={handleChange}
-                                className='w-[30%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder'
-                            />
-                            <input
-                                type='text'
-                                name='lastName'
-                                placeholder='Last Name'
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                className='w-[30%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder'
-                            />
-                            <input
-                                type='date'
-                                name='dob'
-                                placeholder='Date of Birth'
-                                value={formData.dob}
-                                onChange={handleChange}
-                                className='w-[30%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder'
-                            />
-                        </div>
-                        <div className='w-full h-[50%] '>
-                            <Dropdown selectedOption={selectedOption} handleOptionSelect={handleOptionSelect} />
-                        </div>
-                        
-                    </div>
+    <form className='flex flex-col items-center w-[100%] md:h-full h-full  gap-3   md:mt-[-30px] bg-white' onSubmit={handleSubmit}>
+      {isLoading && <WaitingDialoag />}
+        <div className='flex flex-col w-[90%] md:h-[86%] h-screen  border-[2px] items-center  md:mt-0 mt-2 bg-white'>
+           
+            {/* Basic details */}
+            <div className='flex flex-col w-full h-[60%] items-center md:mt-[-10px] mt-[-24px] '>
+                <div className='flex w-[90%] h-[30%] items-center '>
+                    <span className='text-[16px] font-semibold text-text'>Basic Details</span>
                 </div>
-
-                {/* Contact Details */}
-                <div className='flex flex-col gap-2 w-[90%] max-h-[30%]' >
-                    <div className='flex w-[90%] h-[30%]  items-center mt-[-45px]'>
-                        <span className='text-[16px] font-semibold text-text'>Contact Details</span>
-                    </div>
-                    
-                    <div className='w-full min-h-[50%] flex gap-6 flex-wrap items-center'>
+                <div className='flex flex-col gap-3 w-[90%] h-[50%] mt-[-10px]'>
+                    <div className='w-full md:min-h-[40%] flex justify-between md:flex-row flex-col md:gap-0 gap-3'>
                         <input
                             type='text'
-                            name='email'
-                            placeholder='Email'
-                            value={formData.email}
+                            name='firstName'
+                            placeholder='First Name'
+                            value={formData.firstName}
                             onChange={handleChange}
-                            className='w-[25%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder '
+                            className='md:w-[30%] w-full h-[40px]  outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder'
                         />
-                       <input
-                            type="text"
-                            name="mobileNumber"
-                            placeholder="Mobile Number"
-                            value={formData.mobileNumber}
+                        <input
+                            type='text'
+                            name='lastName'
+                            placeholder='Last Name'
+                            value={formData.lastName}
                             onChange={handleChange}
-                            className="w-[25%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder"
-                            />
-                        
-                        {/* Handle Extra Mobile numbers feilds */}
-                        <button
-                            type="button"
-                            onClick={handleTogglePhoneFieldsOne}
-                            className="flex items-center justify-center outline-none border-none rounded-full bg-transparent text-white"
-                            >
-                            {showExtraPhoneFieldOne ? <FontAwesomeIcon icon={faMinus} color='red' size='xl'/> : <FontAwesomeIcon icon={faPlus} color='#00000040' size='xl'/>}
-                        </button>
-
-                        {/* Handle Extra Mobile numbers  feild One */}
-                        {showExtraPhoneFieldOne && (
-                        <>
-                            <input
-                                type="text"
-                                name="mobileNumberTwo"
-                                placeholder="Mobile Number"
-                                value={formData.mobileNumberTwo}
-                                onChange={handleChange}
-                                className="w-[25%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder"
-                                />
-                            <button
-                                type="button"
-                                onClick={handleTogglePhoneFieldsTwo}
-                                className="w-[10px] h-[10px] flex items-center justify-center outline-none border-none rounded-full bg-transparent text-white"
-                                >
-                                {showExtraPhoneFieldTwo ? <FontAwesomeIcon icon={faMinus} color='red' size='xl'/> : <FontAwesomeIcon icon={faPlus} color='#00000040' size='xl'/>}
-                            </button>
-
-                         </> )}
-                        
-                         {/* Handle Extra Mobile numbers  feild Two */}
-                         {showExtraPhoneFieldTwo && (
-                        <>
-                            <input
-                                type="text"
-                                name="mobileNumberThree"
-                                placeholder="Mobile Number"
-                                value={formData.mobileNumberThree}
-                                onChange={handleChange}
-                                className="w-[25%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder mt-[-15px]"
-                                />
-                         </> )}
-                           
-                        
+                            className='md:w-[30%] w-full h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder'
+                        />
+                        <input
+                            type='date'
+                            name='dob'
+                            placeholder='Date of Birth'
+                            value={formData.dob}
+                            onChange={handleChange}
+                            className='md:w-[30%] w-full h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder'
+                        />
                     </div>
-                </div>
-
-                {/* Auth Details */}
-                <div className='flex flex-col gap-2 w-[90%] max-h-[30%] mt-2' >
-
-                    <div className='flex w-[90%] h-[30%]  items-center '>
-                        <span className='text-[16px] font-semibold text-text'>Auth info</span>
+                    <div className='w-full h-[50%] md:mt-0 mt-1'>
+                        <Dropdown selectedOption={selectedOption} handleOptionSelect={handleOptionSelect} />
                     </div>
                     
-                    <div className='w-full min-h-[50%] flex gap-6 flex-wrap items-center '>
-                        <input
-                            type='password'
-                            name='password'
-                            placeholder='Password'
-                            value={formData.password}
-                            onChange={handleChange}
-                            className='w-[30%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder'
-                        />
-                    </div>
                 </div>
             </div>
 
-            <div className='flex flex-row items-start justify-end w-[90%] h-[10%] gap-1  '>
-                <Button
-                    type="button"
-                    title="Clear"
-                    handleClick={handleClear}
-                    style={{
-                        color: '#003FE4',
-                        border: "1px solid #003FE4"
-                    }}
-                   
-                />
-                <Button
-                    type="submit"
-                    title="Save"
-                    style={{
-                        color: 'white',
-                        backgroundColor: "#003FE4"
-                    }}
-               
-                />
+           {/* Contact Details */}
+            <div className='flex flex-col gap-2 w-[90%] max-h-[30%] md:mt-0 mt-2' >
+                <div className='flex w-[90%] h-[30%]  items-center mt-[-45px]'>
+                    <span className='text-[16px] font-semibold text-text'>Contact Details</span>
+                </div>
+
+                <div className=' relative w-full md:min-h-[50%] flex gap-6 md:flex-wrap items-center md:mt-0 mt-3 md:flex-row flex-col'>
+                    <input
+                        type='text'
+                        name='email'
+                        placeholder='Email'
+                        value={formData.email}
+                        onChange={handleChange}
+                        className='md:w-[25%] w-full h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder '
+                    />
+                    <input
+                        type="text"
+                        name="mobileNumber"
+                        placeholder="Mobile Number"
+                        value={formData.mobileNumber}
+                        onChange={handleChange}
+                        className="md:w-[25%] md:static absolute left-0 top-12 w-[90%] h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder"
+                    />
+
+                    {/* Handle Extra Mobile numbers feilds */}
+                    <button
+                        type="button"
+                        onClick={handleTogglePhoneFieldsOne}
+                        className="flex md:static absolute top-14 right-0 items-center justify-center outline-none border-none rounded-full bg-transparent text-white"
+                    >
+                        {showExtraPhoneFieldOne ? <FontAwesomeIcon icon={faMinus} color='red' size='xl'/> : <FontAwesomeIcon icon={faPlus} color='#00000040' size='xl'/>}
+                    </button>
+
+                    {/* Handle Extra Mobile numbers feild One */}
+                    {showExtraPhoneFieldOne && (
+                    <>
+                        <input
+                            type="text"
+                            name="mobileNumberTwo"
+                            placeholder="Mobile Number"
+                            value={formData.mobileNumberTwo}
+                            onChange={handleChange}
+                            className="md:w-[25%] md:static absolute left-0 top-24 w-[90%]  h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder"
+                        />
+                        <button
+                            type="button"
+                            onClick={handleTogglePhoneFieldsTwo}
+                            className="w-[10px] h-[10px]  md:static absolute top-28 right-1  flex items-center justify-center outline-none border-none rounded-full bg-transparent text-white"
+                        >
+                            {showExtraPhoneFieldTwo ? <FontAwesomeIcon icon={faMinus} color='red' size='xl'/> : <FontAwesomeIcon icon={faPlus} color='#00000040' size='xl'/>}
+                        </button>
+                    </>
+                    )}
+
+                    {/* Handle Extra Mobile numbers feild Two */}
+                    {showExtraPhoneFieldTwo && (
+                    <>
+                        <input
+                            type="text"
+                            name="mobileNumberThree"
+                            placeholder="Mobile Number"
+                            value={formData.mobileNumberThree}
+                            onChange={handleChange}
+                            className="md:w-[25%] w-[90%] md:static absolute left-0 top-40  h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder mt-[-15px]"
+                        />
+                    </>
+                    )}
+                </div>
             </div>
-            {/* <ToastContainer /> */}
-            <Toaster />
-        </form>
+
+            {/* Auth Details */}
+            <div className={`flex flex-col gap-2 w-[90%] max-h-[30%]  mb-1 ${showExtraPhoneFieldTwo ? 'md:mt-0 mt-36 ' : 'md:mt-0 mt-[6rem]'}`}>
+                <div className='flex w-[90%] h-[30%]  items-center '>
+                    <span className='text-[16px] font-semibold text-text'>Auth info</span>
+                </div>
+
+                <div className='w-full min-h-[50%] flex gap-6 flex-wrap items-center '>
+                    <input
+                        type='password'
+                        name='password'
+                        placeholder='Password'
+                        value={formData.password}
+                        onChange={handleChange}
+                        className='md:w-[30%] w-full h-[40px] outline-none border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 placeholder:text-placeholder'
+                    />
+                </div>
+            </div>
+
+        </div>
+
+        <div className='flex flex-row items-start md:justify-end justify-center w-[90%] h-[10%] md:gap-1 gap-3 lg:mb-0 mb-5 '>
+            <Button
+                type="button"
+                title="Clear"
+                handleClick={handleClear}
+                style={{
+                    color: '#003FE4',
+                    border: "1px solid #003FE4"
+                }}
+               
+            />
+            <Button
+                type="submit"
+                title="Save"
+                style={{
+                    color: 'white',
+                    backgroundColor: "#003FE4"
+                }}
+           
+            />
+        </div>
+        {/* <ToastContainer /> */}
+        <Toaster />
+    </form>
+
+        
     );
 }
 

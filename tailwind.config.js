@@ -20,6 +20,15 @@ module.exports = {
       fontFamily: {
         Lato: "Lato, sans-serif",
       },
+      keyframes: {
+        spin: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+      },
+      animation: {
+        "spin-once": "spin 0.5s linear",
+      },
     },
   },
   plugins: [],
