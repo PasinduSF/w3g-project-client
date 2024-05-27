@@ -115,32 +115,45 @@ function UserList() {
   
         if (response.data.result.message === 'User deactivated successfully') {
           toast.success('User has been deactivated successfully');
+
+          setRecords((prevRecords) =>
+            prevRecords.map((user) =>
+              user._id === userId
+                ? {
+                    ...user,
+                    status: 'INACTIVE',
+                    backgroundColor:"#fed7d7",
+                    active: false,
+                  }
+                : user
+            )
+          );
   
           // Send notification to the deactivated user
-          const notificationResponse = await axios.post(`${baseUrl}/notifications/send`, {
-            userId,
-            fcmToken1,
-          });
+          // const notificationResponse = await axios.post(`${baseUrl}/notifications/send`, {
+          //   userId,
+          //   fcmToken1,
+          // });
   
-          if (notificationResponse.status === 201) {
-            console.log('Notification sent successfully');
+          // if (notificationResponse.status === 201) {
+          //   console.log('Notification sent successfully');
   
-            // Update the records state with the deactivated user
-            setRecords((prevRecords) =>
-              prevRecords.map((user) =>
-                user._id === userId
-                  ? {
-                      ...user,
-                      status: 'INACTIVE',
-                      backgroundColor:"#fed7d7",
-                      active: false,
-                    }
-                  : user
-              )
-            );
-          } else {
-            console.error('Failed to send notification');
-          }
+          //   // Update the records state with the deactivated user
+          //   setRecords((prevRecords) =>
+          //     prevRecords.map((user) =>
+          //       user._id === userId
+          //         ? {
+          //             ...user,
+          //             status: 'INACTIVE',
+          //             backgroundColor:"#fed7d7",
+          //             active: false,
+          //           }
+          //         : user
+          //     )
+          //   );
+          // } else {
+          //   console.error('Failed to send notification');
+          // }
         } else {
           console.error('Error deactivating user');
         }
