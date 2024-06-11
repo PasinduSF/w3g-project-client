@@ -20,7 +20,7 @@ function Dashboard() {
     return (
         <div className='w-full md:h-screen min-[120px]:h-full flex flex-col bg-white    '>
             <FcmTokenComp />
-            <div className='w-full h-[10%] '>
+            <div className='w-full h-[10%] '>  
                 <NavBar />
             </div>
             <div className='flex items-center justify-center w-full h-[90%] '>
