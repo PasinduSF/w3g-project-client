@@ -1,7 +1,5 @@
 FROM node:latest 
 
-# Declare build time environment variables (if needed)
-ARG NEXT_PUBLIC_BASE_URL 
 
 WORKDIR /app
 COPY package*.json ./
