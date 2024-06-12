@@ -1,4 +1,4 @@
-FROM node:20-alpine3.18 AS builder
+FROM node:latest 
 
 # Declare build time environment variables (if needed)
 ARG NEXT_PUBLIC_BASE_URL 
