@@ -8,4 +8,4 @@ COPY . .
 RUN npm run build
 
 EXPOSE 3000
-CMD ["npm","run", "dev"]  # Start the Next.js server in production mode 
+CMD ["npm","run", "start"]  # Start the Next.js server in production mode 
