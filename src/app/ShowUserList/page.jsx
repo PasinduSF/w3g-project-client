@@ -12,7 +12,7 @@ function ShowUserList() {
 
     useEffect(() => {
         const loginUserType = localStorage.getItem('user_type')
-        setUserType(loginUserType)
+        setUserType(loginUserType) 
       }, []);
 
     return (
