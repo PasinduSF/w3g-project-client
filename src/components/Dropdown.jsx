@@ -15,7 +15,7 @@ function Dropdown({ selectedOption, handleOptionSelect }) {
     return (
         <div className='relative flex items-center md:w-[30%] w-full h-[40px] placeholders border-[1px] border-[#D9D9D9] rounded-[4px] pl-3 justify-between pr-3 cursor-pointer'
             onClick={toggleDropdown}>
-            {selectedOption || 'Gender'} {/* Display the selected option, or 'Gender' if none is selected */}
+            {selectedOption || 'Gender'} 
             <FontAwesomeIcon icon={faCaretDown} />
 
             {isOpen && (
