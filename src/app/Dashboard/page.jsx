@@ -28,7 +28,7 @@ function Dashboard() {
 
                     <div className='flex flex-col justify-center w-[90%] h-[20%]  gap-1'>
                         <span className='text-[28px] font-bold '>{userType === 'ADMIN'? 'User Onboarding' : 'Your Details'}</span>
-                        <span className='text-text text-[16px]'>Lorem ipsum dolor sit amet consectetur. </span>
+                        {/* <span className='text-text text-[16px]'>Lorem ipsum dolor sit amet consectetur. </span> */}
                     </div>
                     {userType === 'ADMIN' &&
                         <div className='flex flex-col justify-center items-center w-[90%] min-h-[80%] bg-white'>
